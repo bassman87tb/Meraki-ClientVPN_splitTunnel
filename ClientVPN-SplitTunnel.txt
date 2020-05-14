@@ -1,0 +1,25 @@
+<#
+Script to enable Meraki VPN tunnel
+#>
+$vpnname = {name of VPN}
+$vpnserver = {MX hostname}
+$vpnkey = {Shared-Secret}
+$existingprofile = Get-VpnConnection -Name "$vpnname" -ea SilentlyContinue
+$Destination1 = 'remote subnet'
+$Destination2 = 'remote subnet'
+<#
+Add additional destination variables for each remote subnet
+#>
+
+if ($existingprofile -eq $null) {
+    Add-VpnConnection -Name $vpnname -ServerAddress $vpnserver -TunnelType L2tp -AuthenticationMethod mschapv2,Pap -RememberCredential -EncryptionLevel Required -L2tpPsk $vpnkey -force
+    Set-VpnConnection -Name $vpnname -SplitTunneling $true
+    Add-VpnConnectionRoute -ConnectionName $vpnname -DestinationPrefix $Destination1
+    Add-VpnConnectionRoute -ConnectionName $vpnname -DestinationPrefix $Destination2
+	<#
+	Add a line for each destination subnet
+	#>
+    }
+<#
+Script to enable Meraki VPN tunnel
+#>
